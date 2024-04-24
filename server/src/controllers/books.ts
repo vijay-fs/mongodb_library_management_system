@@ -90,9 +90,10 @@ class BookController {
         //             {'authors.name': {$regex: new RegExp(query, 'i')}},
         //         ]
         //     }).limit(25).toArray();
-        // down is fulltextsearch
+
         const vector = await getEmbeddings(query);
         const aggregationPipeline = [
+            //  full text search
             // {
             //     $search: {
             //         index: 'fulltextsearch',
@@ -103,6 +104,7 @@ class BookController {
             //     },
             // },
             // {
+            //  Vector Search
             {
                 $vectorSearch: {
                     queryVector: vector,
@@ -115,24 +117,6 @@ class BookController {
                 },
             },
         ];
-        /* vector search
-          const aggregationPipeline = [
-          {
-            $vectorSearch: {
-              queryVector: "vector goes here",
-              path: "embeddings",
-              numCandidates: 100, // Number of nearest neighbors to use during the search.
-              index: "vectorsearch",
-              limit: 100, // Number of documents to return in the results. Value can't exceed the value of numCandidates.
-            },
-          },
-        ];
-
-        const books = (await collections?.books
-          ?.aggregate(aggregationPipeline)
-          .toArray()) as Book[];
-        return books;
-        */
         const books = (await collections?.books
             ?.aggregate(aggregationPipeline)
             .toArray()) as Book[];
